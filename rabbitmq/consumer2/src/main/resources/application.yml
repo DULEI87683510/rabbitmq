@@ -16,4 +16,4 @@ demo:
     config:
       model: 2
 server:
-  port: 8888
+  port: 8889

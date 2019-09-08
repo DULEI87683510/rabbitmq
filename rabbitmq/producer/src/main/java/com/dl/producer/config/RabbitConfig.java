@@ -41,12 +41,12 @@ public class RabbitConfig {
     private SimpleRabbitListenerContainerFactoryConfigurer factoryConfigurer;
 
     /**
-     * 并发消费者的初始化数
+     * 并发消费者的线程初始化数
      */
     @Value("${spring.rabbitmq.listener.simple.concurrency}")
     private int concurrency;
     /**
-     * 并发消费者的最大数
+     * 并发消费者的线程最大数
      */
     @Value("${spring.rabbitmq.listener.simple.max-concurrency}")
     private int maxConcurrency;
@@ -156,6 +156,7 @@ public class RabbitConfig {
     @Bean(name = "singleListenerContainer")
     public SimpleRabbitListenerContainerFactory listenerContainer() {
         SimpleRabbitListenerContainerFactory factory = new SimpleRabbitListenerContainerFactory();
+        factory.createListenerContainer();
         factory.setConnectionFactory(connectionFactory);
         factory.setMessageConverter(new Jackson2JsonMessageConverter());
         //初始化消费者1
@@ -188,6 +189,24 @@ public class RabbitConfig {
         return factory;
     }
 
+    /**
+     * #开启 confirm 确认机制
+     * spring.rabbitmq.publisher-confirms=true
+     * #开启 return 确认机制
+     * spring.rabbitmq.publisher-returns=true
+     *
+     *
+     #设置消费端手动 ack
+     spring.rabbitmq.listener.simple.acknowledge-mode=manual
+     #消费者最小数量
+     spring.rabbitmq.listener.simple.concurrency=1
+     #消费之最大数量
+     spring.rabbitmq.listener.simple.max-concurrency=10
+
+     #在单个请求中处理的消息个数，他应该大于等于事务数量(unack的最大数量)
+     spring.rabbitmq.listener.simple.prefetch=2
+     * @return
+     */
     @Bean
     public RabbitTemplate rabbitTemplate() {
         connectionFactory.setPublisherConfirms(true);

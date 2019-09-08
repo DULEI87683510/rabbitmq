@@ -1,19 +1,15 @@
 
 spring:
    rabbitmq:
-     host: 192.168.117.132
+     host: 192.168.1.11
      port: 5672
      username: admin
      password: admin
      publisher-confirms: true
-     listener:
-       simple:
-         concurrency: 10
-         max-concurrency: 20
-         prefetch: 5
+
 demo:
   rabbitmq:
     config:
-      model: 1
+      model: 2
 server:
   port: 9999

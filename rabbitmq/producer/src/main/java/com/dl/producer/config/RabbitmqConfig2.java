@@ -18,14 +18,25 @@ import org.springframework.context.annotation.Configuration;
  *@Version 1.0
  */
 @Configuration
-@ConditionalOnProperty(name="model",prefix = "demo.rabbitmq.config" ,matchIfMissing = false,havingValue = "1")
-public class RabbitmqConfig1 {
-    private static final Logger log = LoggerFactory.getLogger(RabbitmqConfig1.class);
+@ConditionalOnProperty(name="model",prefix = "demo.rabbitmq.config" ,matchIfMissing = false,havingValue = "2")
+public class RabbitmqConfig2 {
+    private static final Logger log = LoggerFactory.getLogger(RabbitmqConfig2.class);
+
     @Bean
-    public Queue model1() {
+    public Queue mnodel2() {
         //声明队列
-        log.info("声明队列model1");
-        return new Queue("model1");
+        log.info("声明队列model2");
+        return new Queue("model2");
+    }
+
+    @Bean
+    public DirectExchange directExchange() {
+        return new DirectExchange("directExchange1", true, false);
+    }
+
+    @Bean
+    public Binding directBinding() {
+        return BindingBuilder.bind(mnodel2()).to(directExchange()).with("model2");
     }
 
 }
