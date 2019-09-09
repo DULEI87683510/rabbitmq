@@ -3,6 +3,7 @@ package com.dl.producer.sendcontroller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.AmqpTemplate;
+import org.springframework.amqp.rabbit.AsyncRabbitTemplate;
 import org.springframework.amqp.rabbit.annotation.Exchange;
 import org.springframework.amqp.rabbit.annotation.Queue;
 import org.springframework.amqp.rabbit.annotation.QueueBinding;
@@ -27,7 +28,17 @@ public class SendMessageController {
     private RabbitTemplate rabbitTemplate;
     @Autowired
     private AmqpTemplate amqpTemplate;
+/*    @Autowired
+    private  AsyncRabbitTemplate asyncRabbitTemplate;*/
+
         @GetMapping("/send1")
+        /**
+         * @Description  消息队列第一种简单队列的消息发送
+         * @return java.lang.String
+         * @param message
+         * @Author DL
+         * @Date 2019/9/6 18:12
+         */
         public String send1(String message){
         amqpTemplate.convertAndSend("model1",message);
         return "已经发送消息："+message;
@@ -37,6 +48,7 @@ public class SendMessageController {
         @GetMapping("/send2")
         public String send2(String message){
             //Jackson2JsonMessageConverter()是將數據轉換成2進制消息流
+
             rabbitTemplate.setMessageConverter(new Jackson2JsonMessageConverter());
             rabbitTemplate.setExchange("directExchange1");
            rabbitTemplate.setRoutingKey("model2");
@@ -47,4 +59,67 @@ public class SendMessageController {
 
         return "已经发送消息："+message;
         }
+    @GetMapping("/send3")
+    public String send3(String message){
+        //Jackson2JsonMessageConverter()是將數據轉換成2進制消息流
+
+        rabbitTemplate.setMessageConverter(new Jackson2JsonMessageConverter());
+        rabbitTemplate.setExchange("fanoutExchange");
+        amqpTemplate.convertAndSend(message);
+
+        return "已经发送消息："+message;
+    }
+
+    @GetMapping("/send4_1")
+    public String send4_1(String message){
+        //Jackson2JsonMessageConverter()是將數據轉換成2進制消息流
+
+        rabbitTemplate.setMessageConverter(new Jackson2JsonMessageConverter());
+        rabbitTemplate.setExchange("directExchange");
+        rabbitTemplate.setRoutingKey("rout1");
+        amqpTemplate.convertAndSend(message);
+
+        return "已经发送消息："+message;
+    }
+    @GetMapping("/send4_2")
+    public String send4_2(String message){
+        //Jackson2JsonMessageConverter()是將數據轉換成2進制消息流
+
+        rabbitTemplate.setMessageConverter(new Jackson2JsonMessageConverter());
+        rabbitTemplate.setExchange("directExchange");
+        rabbitTemplate.setRoutingKey("rout2");
+        amqpTemplate.convertAndSend(message);
+        return "已经发送消息："+message;
+    }
+
+    @GetMapping("/send4_3")
+    public String send4_3(String message){
+        //Jackson2JsonMessageConverter()是將數據轉換成2進制消息流
+
+        rabbitTemplate.setMessageConverter(new Jackson2JsonMessageConverter());
+        rabbitTemplate.setExchange("directExchange");
+        rabbitTemplate.setRoutingKey("rout3");
+        amqpTemplate.convertAndSend(message);
+        return "已经发送消息："+message;
+    }
+    @GetMapping("/send5_1")
+    public String send5_1(String message){
+        //Jackson2JsonMessageConverter()是將數據轉換成2進制消息流
+
+        rabbitTemplate.setMessageConverter(new Jackson2JsonMessageConverter());
+        rabbitTemplate.setExchange("topicExchange");
+        rabbitTemplate.setRoutingKey("rout.1");
+        amqpTemplate.convertAndSend(message);
+        return "已经发送消息："+message;
+    }
+    @GetMapping("/send5_2")
+    public String send5_2(String message){
+        //Jackson2JsonMessageConverter()是將數據轉換成2進制消息流
+
+        rabbitTemplate.setMessageConverter(new Jackson2JsonMessageConverter());
+        rabbitTemplate.setExchange("topicExchange");
+        rabbitTemplate.setRoutingKey("test.1");
+        amqpTemplate.convertAndSend(message);
+        return "已经发送消息："+message;
+    }
 }

@@ -1,6 +1,6 @@
 spring:
    rabbitmq:
-     host: 192.168.1.11
+     host: 192.168.117.132
      port: 5672
      username: admin
      password: admin
@@ -10,10 +10,10 @@ spring:
          concurrency: 10
          max-concurrency: 20
          prefetch: 5
-         acknowledge-mode: manual   #手动确认
+     #    acknowledge-mode: manual   #手动确认
 demo:
   rabbitmq:
     config:
-      model: 2
+      model: 3
 server:
   port: 8889

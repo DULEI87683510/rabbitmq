@@ -209,6 +209,7 @@ public class RabbitConfig {
      */
     @Bean
     public RabbitTemplate rabbitTemplate() {
+
         connectionFactory.setPublisherConfirms(true);
         connectionFactory.setPublisherReturns(true);
         RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);

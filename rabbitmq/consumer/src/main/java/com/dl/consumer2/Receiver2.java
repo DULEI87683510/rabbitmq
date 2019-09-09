@@ -1,13 +1,11 @@
-package com.dl.consumer;
+package com.dl.consumer2;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rabbitmq.client.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.amqp.core.AcknowledgeMode;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.*;
-import org.springframework.amqp.rabbit.listener.api.ChannelAwareMessageListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
@@ -28,10 +26,11 @@ public class Receiver2  {
     @RabbitHandler
     @RabbitListener(queues = "model2")
     public void process2_1(Message message,Channel channel) throws InterruptedException, IOException {
+        //channel.basicQos(1);
         Thread.sleep(1000);
         log.info("收到队列process2_1的消息:{}",new String(message.getBody()) );
-        channel.basicAck(message.getMessageProperties().getDeliveryTag(),false);
-        log.info("收到队列process2_1的消息确认");
+      //  channel.basicAck(message.getMessageProperties().getDeliveryTag(),false);
+       // log.info("收到队列process2_1的消息确认");
 
     }
 

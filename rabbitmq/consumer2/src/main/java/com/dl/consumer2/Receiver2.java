@@ -1,4 +1,4 @@
-package com.dl.consumer;
+package com.dl.consumer2;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rabbitmq.client.Channel;
@@ -26,13 +26,25 @@ public class Receiver2 {
     public void process2_1(String message) throws InterruptedException {
         log.info("收到队列process2_1的消息:{}",message);
     }*/
+    /**
+     *  deliveryTag 消息ID
+     multiple （true = 批量  / false = 不批量）
+     requeue （true = 重回队列  / false = 删除该消息）
+     void basicNack(long deliveryTag, boolean multiple , boolean requeue)
+     channel.basicReject 一次只能拒绝一条消息，如果需要批量拒绝那么就需要用到 channel.basicNack，参数介绍如下
+     //deliveryTag 消息ID
+     //requeue true = （重回队列  / false = 删除该消息）
+     void basicReject(long deliveryTag, boolean requeue) throws IOException;
+     */
 
     @RabbitListener(queues = "model2")
     @RabbitHandler
     public void process2_2(Message message, Channel channel) throws InterruptedException, IOException {
+      //  channel.basicQos(1);
         Thread.sleep(2000);
         log.info("收到队列process2_1的消息:{}",new String(message.getBody()) );
-        channel.basicAck(message.getMessageProperties().getDeliveryTag(),false);
-        log.info("收到队列process2_1的消息确认");
+        //message.getMessageProperties().getDeliveryTag()消息ID
+      //  channel.basicAck(message.getMessageProperties().getDeliveryTag(),false);
+     //   log.info("收到队列process2_1的消息确认");
     }
 }

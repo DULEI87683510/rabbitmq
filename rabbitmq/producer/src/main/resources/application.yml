@@ -1,15 +1,16 @@
 
 spring:
    rabbitmq:
-     host: 192.168.1.11
+     host: 192.168.117.132
      port: 5672
      username: admin
      password: admin
-     publisher-confirms: true
+     publisher-confirms: true  # 消息是否到交换机，若没有就回调
+     publisher-returns: true   #消息是否从交换机到消息队列，若没有就回调(需设置mandatory=true,否则不回回调,消息就丢了)
 
 demo:
   rabbitmq:
     config:
-      model: 2
+      model: 5
 server:
   port: 9999

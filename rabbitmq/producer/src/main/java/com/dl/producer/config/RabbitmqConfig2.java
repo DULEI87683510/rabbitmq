@@ -23,7 +23,7 @@ public class RabbitmqConfig2 {
     private static final Logger log = LoggerFactory.getLogger(RabbitmqConfig2.class);
 
     @Bean
-    public Queue mnodel2() {
+    public Queue model2() {
         //声明队列
         log.info("声明队列model2");
         return new Queue("model2");
@@ -36,7 +36,7 @@ public class RabbitmqConfig2 {
 
     @Bean
     public Binding directBinding() {
-        return BindingBuilder.bind(mnodel2()).to(directExchange()).with("model2");
+        return BindingBuilder.bind(model2()).to(directExchange()).with("model2");
     }
 
 }
