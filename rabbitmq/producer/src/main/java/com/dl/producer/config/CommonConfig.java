@@ -15,6 +15,8 @@ import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.retry.backoff.ExponentialBackOffPolicy;
+import org.springframework.retry.support.RetryTemplate;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -41,6 +43,7 @@ public class CommonConfig  {
         connectionFactory.setPassword("admin");
         connectionFactory.setPublisherConfirms(true);
         connectionFactory.setPublisherReturns(true);
+        connectionFactory.addConnectionListener(new RabbitmqConnectionListener());
         return connectionFactory;
     }
 
@@ -81,17 +84,16 @@ public class CommonConfig  {
         //AmqpTemplate 是amqp协议的抽象模板
         //RabbitTemplate是AmqpTemplate的具体实现，spring定义的一套amqp协议标准，而RabbitTemplate是它的具体实现
 
- /*       connectionFactory=new CachingConnectionFactory("localhost");
-        connectionFactory.setUri("192.168.117.132");
-        connectionFactory.setPort(5672);
-        connectionFactory.setUsername("admin");
-        connectionFactory.setPassword("admin");
-        connectionFactory.setPublisherConfirms(true);
-        connectionFactory.setPublisherReturns(true);*/
-      //  Connection connection= connectionFactory.createConnection();
-
 
         RabbitTemplate rabbitTemplate = new RabbitTemplate(cachingConnectionFactory());
+        //发送消息的时候重连机制，三次尝试失败后会抛出异常
+        RetryTemplate retryTemplate = new RetryTemplate();
+        ExponentialBackOffPolicy backOffPolicy = new ExponentialBackOffPolicy();
+        backOffPolicy.setInitialInterval(500);
+        backOffPolicy.setMultiplier(10.0);
+        backOffPolicy.setMaxInterval(10000);
+        retryTemplate.setBackOffPolicy(backOffPolicy);
+        rabbitTemplate.setRetryTemplate(retryTemplate);
         rabbitTemplate.setMandatory(true);
         rabbitTemplate.setConfirmCallback((correlationData, ack, cause) -> log.info("消息发送成功:correlationData({}),ack({}),cause({})", correlationData, ack, cause));
         rabbitTemplate.setReturnCallback((message, replyCode, replyText, exchange, routingKey) -> log.info("消息丢失:exchange({}),route({}),replyCode({}),replyText({}),message:{}", exchange, routingKey, replyCode, replyText, message));

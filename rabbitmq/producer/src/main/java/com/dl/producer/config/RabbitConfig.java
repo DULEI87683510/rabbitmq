@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
+import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
@@ -140,6 +141,7 @@ public class RabbitConfig {
         //手动确认
         simpleMessageListenerContainer.setAcknowledgeMode(AcknowledgeMode.MANUAL);
         //设置监听
+        //设置了该监听，receiver
      //   simpleMessageListenerContainer.setMessageListener(receiver);
 
         return simpleMessageListenerContainer;
@@ -179,6 +181,8 @@ public class RabbitConfig {
      */
     @Bean(name = "multiListenerContainer")
     public SimpleRabbitListenerContainerFactory multiListenerContainer() {
+        AmqpAdmin amqpAdmin=new RabbitAdmin(connectionFactory);
+        amqpAdmin.declareQueue(new Queue("myqueue"));
         SimpleRabbitListenerContainerFactory factory = new SimpleRabbitListenerContainerFactory();
         factoryConfigurer.configure(factory, connectionFactory);
         factory.setMessageConverter(new Jackson2JsonMessageConverter());

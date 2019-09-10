@@ -8,6 +8,7 @@ import org.springframework.amqp.AmqpException;
 import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessagePostProcessor;
+import org.springframework.amqp.core.MessageProperties;
 import org.springframework.amqp.rabbit.AsyncRabbitTemplate;
 import org.springframework.amqp.rabbit.annotation.Exchange;
 import org.springframework.amqp.rabbit.annotation.Queue;
@@ -39,7 +40,7 @@ public class SendMessageController {
 /*    @Autowired
     private  AsyncRabbitTemplate asyncRabbitTemplate;*/
 
-        @GetMapping("/send1")
+
         /**
          * @Description  消息队列第一种简单队列的消息发送
          * @return java.lang.String
@@ -47,6 +48,7 @@ public class SendMessageController {
          * @Author DL
          * @Date 2019/9/6 18:12
          */
+        @GetMapping("/send1")
         public String send1(String message){
             rabbitTemplate.convertAndSend("model1",message);
         //amqpTemplate.convertAndSend("model1",message);
@@ -138,11 +140,28 @@ public class SendMessageController {
     }
     @GetMapping("/send5_2")
     public String send5_2(String message){
-        //Jackson2JsonMessageConverter()是將數據轉換成2進制消息流
 
         rabbitTemplate.setMessageConverter(new Jackson2JsonMessageConverter());
         rabbitTemplate.setExchange("topicExchange");
         rabbitTemplate.setRoutingKey("test.1");
+        amqpTemplate.convertAndSend(message);
+        return "已经发送消息："+message;
+    }
+    @GetMapping("/send6")
+    public String send6(String message){
+        //Jackson2JsonMessageConverter()是將數據轉換成2進制消息流
+
+        rabbitTemplate.setMessageConverter(jackson2JsonMessageConverter);
+        rabbitTemplate.setExchange("topicExchange");
+        rabbitTemplate.setRoutingKey("test.1");
+        rabbitTemplate.convertAndSend((Object) message, new MessagePostProcessor() {
+            @Override
+            public Message postProcessMessage(Message message) throws AmqpException {
+                MessageProperties messageProperties=message.getMessageProperties();
+                messageProperties.setType("");
+                return message;
+            }
+        });
         amqpTemplate.convertAndSend(message);
         return "已经发送消息："+message;
     }

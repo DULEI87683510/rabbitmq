@@ -36,6 +36,7 @@ public class RabbitmqConfig5 {
     @Bean
     public TopicExchange topicExchange() {
         log.info("声明交换机topicExchange");
+
         return   new TopicExchange("topicExchange",true,false);
     }
 
