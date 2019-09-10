@@ -8,6 +8,7 @@ import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -25,7 +26,7 @@ public class Receiver2  {
 
     @RabbitHandler
     @RabbitListener(queues = "model2")
-    public void process2_1(Message message,Channel channel) throws InterruptedException, IOException {
+    public void process2_1( Message message, Channel channel) throws InterruptedException, IOException {
         //channel.basicQos(1);
         Thread.sleep(1000);
         log.info("收到队列process2_1的消息:{}",new String(message.getBody()) );

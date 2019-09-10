@@ -11,6 +11,6 @@ spring:
 demo:
   rabbitmq:
     config:
-      model: 5
+      model: 2
 server:
   port: 9999

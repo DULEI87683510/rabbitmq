@@ -1,14 +1,20 @@
 package com.dl.producer.sendcontroller;
 
+import com.dl.producer.entity.DemoEntity;
+import com.dl.producer.entity.DemoEntity2;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.amqp.AmqpException;
 import org.springframework.amqp.core.AmqpTemplate;
+import org.springframework.amqp.core.Message;
+import org.springframework.amqp.core.MessagePostProcessor;
 import org.springframework.amqp.rabbit.AsyncRabbitTemplate;
 import org.springframework.amqp.rabbit.annotation.Exchange;
 import org.springframework.amqp.rabbit.annotation.Queue;
 import org.springframework.amqp.rabbit.annotation.QueueBinding;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.amqp.support.converter.DefaultClassMapper;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,6 +34,8 @@ public class SendMessageController {
     private RabbitTemplate rabbitTemplate;
     @Autowired
     private AmqpTemplate amqpTemplate;
+    @Autowired
+    private Jackson2JsonMessageConverter jackson2JsonMessageConverter;
 /*    @Autowired
     private  AsyncRabbitTemplate asyncRabbitTemplate;*/
 
@@ -40,21 +48,37 @@ public class SendMessageController {
          * @Date 2019/9/6 18:12
          */
         public String send1(String message){
-        amqpTemplate.convertAndSend("model1",message);
+            rabbitTemplate.convertAndSend("model1",message);
+        //amqpTemplate.convertAndSend("model1",message);
         return "已经发送消息："+message;
         }
    /* @RabbitListener(bindings ={@QueueBinding(value = @Queue(value = "model2",durable = "true"),
             exchange =@Exchange(value = "directExchange1",durable = "true"),key = "model2")})*/
+
+    /**
+     * spring提供的消息转换器
+     * SimpleMessageConverter是MessageConverter的默认实现，RabbitTemplate默认的配置就是SimpleMessageConverter
+     * 它处理基于文本的内容，序列化的Java对象和字节数组
+     * @param message
+     * @return
+     */
         @GetMapping("/send2")
         public String send2(String message){
             //Jackson2JsonMessageConverter()是將數據轉換成2進制消息流
-
-            rabbitTemplate.setMessageConverter(new Jackson2JsonMessageConverter());
+        /*    Jackson2JsonMessageConverter jackson2JsonMessageConverter=new Jackson2JsonMessageConverter();
+          DefaultClassMapper defaultClassMapper=  new  DefaultClassMapper();
+          defaultClassMapper.setDefaultType(DemoEntity.class);
+            jackson2JsonMessageConverter.setClassMapper(defaultClassMapper);
+            jackson2JsonMessageConverter.set*/
+        DemoEntity2 demoEntity2 =new DemoEntity2();
+        demoEntity2.setMessage(message);
+            rabbitTemplate.setMessageConverter(jackson2JsonMessageConverter);
             rabbitTemplate.setExchange("directExchange1");
            rabbitTemplate.setRoutingKey("model2");
             for(int i=0 ;i<100;i++){
                 log.info("发送第{}条消息:{}",i,message);
-                amqpTemplate.convertAndSend("model2","消息"+i+":"+message);
+
+                amqpTemplate.convertAndSend("model2",demoEntity2);
             }
 
         return "已经发送消息："+message;
