@@ -27,6 +27,15 @@ public class Receiver3 {
     @RabbitHandler
     @RabbitListener(queues = "model3_1")
     public void process3_1(Message message,Channel channel) throws InterruptedException, IOException {
+/*        //手动回执，消费成功，并删除
+        channel.basicAck(message.getMessageProperties().getDeliveryTag(),false);
+        //消费失败，
+        //deliveryTag 消息ID
+        //multiple （true = 批量  / false = 不批量）
+        //requeue （true = 重回队列  / false = 删除该消息），可以批量操作
+        channel.basicNack(message.getMessageProperties().getDeliveryTag(),false,false);
+        //消息拒绝，requeue true = （重回队列  / false = 删除该消息），该方法一次只能拒绝一条
+        channel.basicReject(message.getMessageProperties().getDeliveryTag(),false);*/
         log.info("收到队列process3_1的消息:{}",new String(message.getBody()) );
 
     }

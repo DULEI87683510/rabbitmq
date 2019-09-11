@@ -5,10 +5,7 @@ import com.dl.producer.entity.DemoEntity2;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.AmqpException;
-import org.springframework.amqp.core.AmqpTemplate;
-import org.springframework.amqp.core.Message;
-import org.springframework.amqp.core.MessagePostProcessor;
-import org.springframework.amqp.core.MessageProperties;
+import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.AsyncRabbitTemplate;
 import org.springframework.amqp.rabbit.annotation.Exchange;
 import org.springframework.amqp.rabbit.annotation.Queue;
@@ -149,20 +146,36 @@ public class SendMessageController {
     }
     @GetMapping("/send6")
     public String send6(String message){
-        //Jackson2JsonMessageConverter()是將數據轉換成2進制消息流
+
 
         rabbitTemplate.setMessageConverter(jackson2JsonMessageConverter);
-        rabbitTemplate.setExchange("topicExchange");
-        rabbitTemplate.setRoutingKey("test.1");
+        rabbitTemplate.setExchange("dealExchange7");
+        rabbitTemplate.setRoutingKey("deal");
         rabbitTemplate.convertAndSend((Object) message, new MessagePostProcessor() {
             @Override
             public Message postProcessMessage(Message message) throws AmqpException {
                 MessageProperties messageProperties=message.getMessageProperties();
-                messageProperties.setType("");
+                //默认就是持久化
+                messageProperties.setDeliveryMode(MessageDeliveryMode.PERSISTENT);
+             //   messageProperties.setExpiration(1+"");
                 return message;
             }
         });
-        amqpTemplate.convertAndSend(message);
+       // amqpTemplate.convertAndSend(message);
         return "已经发送消息："+message;
     }
+
+    @GetMapping("/send7")
+    public String send7(String message){
+
+
+        rabbitTemplate.setMessageConverter(jackson2JsonMessageConverter);
+        rabbitTemplate.setExchange("dealExchange7");
+        rabbitTemplate.setRoutingKey("deal7");
+ rabbitTemplate.convertAndSend(message);
+        // amqpTemplate.convertAndSend(message);
+        return "已经发送消息："+message;
+    }
+
+
 }

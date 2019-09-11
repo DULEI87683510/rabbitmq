@@ -10,37 +10,37 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 死信队列演示
+ * 消息拒绝后回到死信队列得演示
  */
 @Configuration
-@ConditionalOnProperty(name="model",prefix = "demo.rabbitmq.config" ,matchIfMissing = false,havingValue = "6")
-public class RabbitmqConfig6 {
+@ConditionalOnProperty(name="model",prefix = "demo.rabbitmq.config" ,matchIfMissing = false,havingValue = "7")
+public class RabbitmqConfig7 {
     /**死信队列，延迟队列配置**/
 
     @Bean
     public Queue registerDelayQueue(){
         Map<String, Object> params = new HashMap<>();
-        params.put("x-dead-letter-exchange","testTopicExchange");
+        params.put("x-dead-letter-exchange","TopicExchange7");
         params.put("x-dead-letter-routing-key","all");
-        params.put("x-message-ttl",5000);
-        return new Queue("dealQueue", true,false,false,params);
+       // params.put("x-message-ttl",5000);
+        return new Queue("deal7Queue", true,false,false,params);
     }
 
     @Bean
     public DirectExchange registerDelayExchange(){
-        return new DirectExchange("dealExchange");
+        return new DirectExchange("dealExchange7");
     }
 
     @Bean
     public Binding registerDelayBinding(){
-        return BindingBuilder.bind(registerDelayQueue()).to(registerDelayExchange()).with("deal");
+        return BindingBuilder.bind(registerDelayQueue()).to(registerDelayExchange()).with("deal7");
     }
 
     /**指标消费队列配置**/
 
     @Bean
     public TopicExchange registerTopicExchange(){
-        return new TopicExchange("testTopicExchange");
+        return new TopicExchange("TopicExchange7");
     }
 
     @Bean
@@ -50,7 +50,7 @@ public class RabbitmqConfig6 {
 
     @Bean
     public Queue registerQueue(){
-        return new Queue("testQueue",true);
+        return new Queue("rejectQueue",true);
     }
 
 }

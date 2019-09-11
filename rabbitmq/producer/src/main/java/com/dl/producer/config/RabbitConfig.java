@@ -141,7 +141,7 @@ public class RabbitConfig {
         //手动确认
         simpleMessageListenerContainer.setAcknowledgeMode(AcknowledgeMode.MANUAL);
         //设置监听
-        //设置了该监听，receiver
+        //设置了该监听，receiver实现channelListener
      //   simpleMessageListenerContainer.setMessageListener(receiver);
 
         return simpleMessageListenerContainer;
